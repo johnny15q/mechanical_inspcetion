@@ -1,0 +1,229 @@
+/* General Reset and Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --primary-color: #007bff; /* Vibrant Blue */
+    --secondary-color: #6c757d; /* Soft Grey */
+    --background-color: #f4f7f6;
+    --danger-color: #dc3545;
+    --card-background: #ffffff;
+    --border-color: #e9ecef;
+    --font-color: #343a40;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--font-color);
+    padding: 10px;
+}
+
+/* --- UTILITY CLASSES --- */
+/* THIS WAS MISSING - It hides the app before login */
+.hidden {
+    display: none !important;
+}
+
+/* --- Layout and Structure --- */
+#login-container, #app-container {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 1.8em;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+/* Card Styling for Sections */
+.card {
+    background: var(--card-background);
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 1.4em;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.login-info {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+    color: var(--secondary-color);
+}
+
+/* --- Form and Input Styles --- */
+.form-group {
+    margin-bottom: 15px;
+    flex-grow: 1;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+    font-size: 0.95em;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="time"],
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1em;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input:focus, textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.05em;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.primary-btn {
+    background-color: var(--primary-color);
+    color: white;
+    width: 100%;
+    margin-top: 15px;
+}
+
+#logout-btn {
+    display: inline-block;
+    background-color: var(--danger-color);
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.05em;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.primary-btn:hover {
+    background-color: #0056b3;
+}
+
+/* .btn-secondary {
+    background-color: var(--secondary-color);
+    color: white;
+} */
+
+/* --- Checklist Specific Styles --- */
+.checklist-header,
+.checklist-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+}
+
+.checklist-header {
+    font-weight: 700;
+    border-bottom: 2px solid var(--primary-color);
+    margin-bottom: 5px;
+    color: var(--primary-color);
+}
+
+.checklist-item {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.item-title-header,
+.item-title {
+    flex-basis: 50%;
+    text-align: left;
+}
+
+.status-cols,
+.checkbox-group {
+    display: flex;
+    flex-basis: 50%;
+    justify-content: space-around;
+}
+
+.status-col {
+    flex-basis: 33.33%;
+    text-align: center;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    margin: 0;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .checklist-header,
+    .checklist-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .item-title-header,
+    .item-title {
+        flex-basis: auto;
+        width: 100%;
+    }
+
+    .status-cols,
+    .checkbox-group {
+        width: 100%;
+        justify-content: space-around;
+        flex-basis: auto;
+    }
+}
