@@ -3,214 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Mechanic Inspection Checklist</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>AutoInspectPro</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        blue: { 50: '#eff6ff', 600: '#2563eb', 700: '#1d4ed8' },
+                        slate: { 900: '#0f172a' }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
+<body class="bg-gray-100 text-gray-900 min-h-screen flex flex-col">
 
-    <div id="login-container">
-        <form id="login-form" class="card">
-            <h2>Mechanic Login</h2>
-            <p class="login-info">Test User: **user** | Password: **123**</p>
-            <div class="form-group">
-                <label for="username">Username:</label>
-                <input type="text" id="username" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" required>
-            </div>
-            <button type="submit" class="btn primary-btn">Login</button>
-            <p id="login-message" class="error-message"></p>
-        </form>
-    </div>
-
-    <div id="app-container" class="hidden">
-        <header>
-            <h1>Vehicle Inspection Checklist</h1>
-            <button id="logout-btn" class="btn-secondary">Logout</button>
-        </header>
-        
-        <main>
-            <section class="card">
-                <h2>👤 Inspection Details</h2>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="inspector_name">Inspector Name:</label>
-                        <input type="text" id="inspector_name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="inspection_date">Date:</label>
-                        <input type="date" id="inspection_date" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="inspection_time">Time:</label>
-                        <input type="time" id="inspection_time" required>
-                    </div>
-                </div>
-            </section>
-            
-            <section class="card">
-                <h2>🚗 Vehicle Details</h2>
-                <form id="vehicle-details-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="vin">VIN:</label>
-                            <input type="text" id="vin" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="plate">Licence Plate:</label>
-                            <input type="text" id="plate" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="make">Make:</label>
-                            <input type="text" id="make" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="model">Model:</label>
-                            <input type="text" id="model" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="year">Year:</label>
-                            <input type="number" id="year" min="1900" max="2100" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="kms">KMs:</label>
-                            <input type="number" id="kms" required>
-                        </div>
-                    </div>
-                </form>
-            </section>
-
-            <section class="card checklist-card">
-                <h2>✅ Inspection Points</h2>
-                <form id="inspection-checklist">
-
-                    <div class="checklist-header">
-                        <div class="item-title-header">Check Item</div>
-                        <div class="status-cols">
-                            <div class="status-col">Yes</div>
-                            <div class="status-col">No</div>
-                            <div class="status-col">Other</div>
-                        </div>
-                    </div>
-                    
-                    <div class="checklist-item" data-item="tyres">
-                        <label class="item-title">Tyres (Tread/Condition)</label>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="tyres_yes" name="tyres_check" value="Yes" class="status-yes-checkbox">
-                            <input type="checkbox" id="tyres_no" name="tyres_check" value="No" class="status-no-checkbox">
-                            <input type="checkbox" id="tyres_other" name="tyres_check" value="Other" class="status-other-checkbox">
-                        </div>
-                    </div>
-
-                    <div class="checklist-item" data-item="brakes">
-                        <label class="item-title">Brakes (Pads/Rotors)</label>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="brakes_yes" name="brakes_check" value="Yes" class="status-yes-checkbox">
-                            <input type="checkbox" id="brakes_no" name="brakes_check" value="No" class="status-no-checkbox">
-                            <input type="checkbox" id="brakes_other" name="brakes_check" value="Other" class="status-other-checkbox">
-                        </div>
-                    </div>
-
-                    <div class="checklist-item" data-item="coolant">
-                        <label class="item-title">Coolant Level/Condition</label>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="coolant_yes" name="coolant_check" value="Yes" class="status-yes-checkbox">
-                            <input type="checkbox" id="coolant_no" name="coolant_check" value="No" class="status-no-checkbox">
-                            <input type="checkbox" id="coolant_other" name="coolant_check" value="Other" class="status-other-checkbox">
-                        </div>
-                    </div>
-
-                    <div class="checklist-item" data-item="gearbox">
-                        <label class="item-title">Gearbox Oil Level/Condition</label>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="gearbox_yes" name="gearbox_check" value="Yes" class="status-yes-checkbox">
-                            <input type="checkbox" id="gearbox_no" name="gearbox_check" value="No" class="status-no-checkbox">
-                            <input type="checkbox" id="gearbox_other" name="gearbox_check" value="Other" class="status-other-checkbox">
-                        </div>
-                    </div>
-
-                    <div class="checklist-item" data-item="engine_oil">
-                        <label class="item-title">Engine Oil Level/Condition</label>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="engine_oil_yes" name="engine_oil_check" value="Yes" class="status-yes-checkbox">
-                            <input type="checkbox" id="engine_oil_no" name="engine_oil_check" value="No" class="status-no-checkbox">
-                            <input type="checkbox" id="engine_oil_other" name="engine_oil_check" value="Other" class="status-other-checkbox">
-                        </div>
-                    </div>
-
-                    <div class="checklist-item" data-item="brake_fluid">
-                        <label class="item-title">Brake Fluid Level</label>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="brake_fluid_yes" name="brake_fluid_check" value="Yes" class="status-yes-checkbox">
-                            <input type="checkbox" id="brake_fluid_no" name="brake_fluid_check" value="No" class="status-no-checkbox">
-                            <input type="checkbox" id="brake_fluid_other" name="brake_fluid_check" value="Other" class="status-other-checkbox">
-                        </div>
-                    </div>
-                    
-                    <div class="checklist-item" data-item="psf">
-                        <label class="item-title">Power Steering Fluid Level</label>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="psf_yes" name="psf_check" value="Yes" class="status-yes-checkbox">
-                            <input type="checkbox" id="psf_no" name="psf_check" value="No" class="status-no-checkbox">
-                            <input type="checkbox" id="psf_other" name="psf_check" value="Other" class="status-other-checkbox">
-                        </div>
-                    </div>
-
-                    <div class="checklist-item" data-item="pressure">
-                        <label class="item-title">Tyre Pressure Check</label>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="pressure_yes" name="pressure_check" value="Yes" class="status-yes-checkbox">
-                            <input type="checkbox" id="pressure_no" name="pressure_check" value="No" class="status-no-checkbox">
-                            <input type="checkbox" id="pressure_other" name="pressure_check" value="Other" class="status-other-checkbox">
-                        </div>
-                    </div>
-
-                    <div class="checklist-item" data-item="headlights">
-                        <label class="item-title">Headlights (High/Low)</label>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="headlights_yes" name="headlights_check" value="Yes" class="status-yes-checkbox">
-                            <input type="checkbox" id="headlights_no" name="headlights_check" value="No" class="status-no-checkbox">
-                            <input type="checkbox" id="headlights_other" name="headlights_check" value="Other" class="status-other-checkbox">
-                        </div>
-                    </div>
-
-                    <div class="checklist-item" data-item="blinkers">
-                        <label class="item-title">Blinkers/Indicators</label>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="blinkers_yes" name="blinkers_check" value="Yes" class="status-yes-checkbox">
-                            <input type="checkbox" id="blinkers_no" name="blinkers_check" value="No" class="status-no-checkbox">
-                            <input type="checkbox" id="blinkers_other" name="blinkers_check" value="Other" class="status-other-checkbox">
-                        </div>
-                    </div>
-
-                    <div class="checklist-item" data-item="reverse">
-                        <label class="item-title">Reverse Lights</label>
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="reverse_yes" name="reverse_check" value="Yes" class="status-yes-checkbox">
-                            <input type="checkbox" id="reverse_no" name="reverse_check" value="No" class="status-no-checkbox">
-                            <input type="checkbox" id="reverse_other" name="reverse_check" value="Other" class="status-other-checkbox">
-                        </div>
-                    </div>
-                    
-                    <hr>
-
-                    <div class="form-group final-comments">
-                        <label for="final_comments">Final Summary and Recommendations:</label>
-                        <textarea id="final_comments" placeholder="Note all issues and recommended actions here." rows="5"></textarea>
-                    </div>
-                    
-                    <button type="submit" class="btn primary-btn">Generate Inspection Report</button>
-                </form>
-            </section>
-        </main>
-    </div>
-
+    <!-- App Root -->
+    <div id="root" class="flex flex-col min-h-screen"></div>
     <script src="script.js"></script>
 </body>
 </html>
