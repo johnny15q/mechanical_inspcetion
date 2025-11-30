@@ -384,12 +384,21 @@
                                         `).join('')}
                                         
                                         ${photos.length < 5 ? `
-                                            <button onclick="document.getElementById('file-${item.id}').click()" class="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-400 hover:text-blue-500 hover:border-blue-500 transition-colors bg-gray-50 hover:bg-white">
-                                                <i data-lucide="plus" class="w-5 h-5"></i>
+                                            <!-- Gallery Button -->
+                                            <button onclick="document.getElementById('file-${item.id}').click()" title="Gallery" class="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-400 hover:text-blue-500 hover:border-blue-500 transition-colors bg-gray-50 hover:bg-white">
+                                                <i data-lucide="image" class="w-5 h-5 mb-0.5"></i>
+                                                <span class="text-[9px] font-bold">GALLERY</span>
+                                            </button>
+                                            
+                                            <!-- Camera Button -->
+                                            <button onclick="document.getElementById('camera-${item.id}').click()" title="Camera" class="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center text-gray-400 hover:text-blue-500 hover:border-blue-500 transition-colors bg-gray-50 hover:bg-white">
+                                                <i data-lucide="camera" class="w-5 h-5 mb-0.5"></i>
+                                                <span class="text-[9px] font-bold">CAMERA</span>
                                             </button>
                                         ` : ''}
                                     </div>
                                     <input type="file" id="file-${item.id}" class="hidden" accept="image/*" onchange="handlePhotoUpload(event, '${item.id}')">
+                                    <input type="file" id="camera-${item.id}" class="hidden" accept="image/*" capture="environment" onchange="handlePhotoUpload(event, '${item.id}')">
                                 </div>
                                 ${(status === 'fail' || status === 'warning') ? `
                                     <div class="md:col-span-3">
