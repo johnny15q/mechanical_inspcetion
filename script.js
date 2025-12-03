@@ -1,4 +1,4 @@
-        // --- Data Constants ---
+      // --- Data Constants ---
         const INITIAL_VEHICLE_INFO = {
             vin: '', make: '', model: '', year: new Date().getFullYear(),
             mileage: '', plate: '', customerName: '', technician: ''
@@ -11,7 +11,9 @@
                     { id: 'oil_lvl', label: 'Engine Oil Level & Condition' },
                     { id: 'coolant', label: 'Coolant Level & Freeze Point' },
                     { id: 'brake_fluid', label: 'Brake Fluid Level & Moisture' },
+                    { id: 'ps_fluid', label: 'Power Steering Fluid' }, // Added
                     { id: 'trans_fluid', label: 'Transmission Fluid' },
+                    { id: 'diff_oil', label: 'Differential Oil' }, // Added
                     { id: 'air_filter', label: 'Engine Air Filter' },
                     { id: 'cabin_filter', label: 'Cabin Air Filter' },
                 ]
@@ -37,7 +39,9 @@
                     { id: 'battery', label: 'Battery Health & Terminals' },
                     { id: 'exhaust', label: 'Exhaust System (Leaks/Rust)' },
                     { id: 'shocks', label: 'Shocks & Struts' },
+                    { id: 'suspension', label: 'Suspension Components' }, // Added
                     { id: 'cv_joints', label: 'CV Joints & Boots' },
+                    { id: 'driveline', label: 'Driveline' }, // Added
                     { id: 'leaks', label: 'Oil/Fluid Leaks (Visual)' },
                 ]
             },
@@ -75,7 +79,8 @@
             inspectionData: {},
             activeCategory: INITIAL_CATEGORIES[0].id,
             isSidebarOpen: false,
-            lastSaved: null
+            lastSaved: null,
+            reportTab: 'fail' // 'fail', 'warning', 'pass'
         };
 
         // --- Initialization ---
@@ -463,53 +468,100 @@
 
         function renderReport() {
             const totalCost = getTotalCost();
-            let issuesHtml = '';
-            let hasIssues = false;
-
+            
+            // 1. Group items by status
+            const grouped = { fail: [], warning: [], pass: [] };
+            
             INITIAL_CATEGORIES.forEach(cat => {
                 const catData = state.inspectionData[cat.id] || {};
                 Object.keys(catData).forEach(itemId => {
                     const item = catData[itemId];
-                    if (item.status === 'fail' || item.status === 'warning') {
-                        hasIssues = true;
-                        const label = cat.items.find(i => i.id === itemId)?.label;
-                        const statusClass = item.status === 'fail' ? 'bg-red-100 text-red-800 border-red-200' : 'bg-yellow-100 text-yellow-800 border-yellow-200';
-                        const statusLabel = item.status === 'fail' ? 'FAIL' : 'WARN';
-                        
-                        // Handle legacy photo numbers and new photo arrays for report
-                        const photos = Array.isArray(item.photos) ? item.photos : [];
-                        
-                        issuesHtml += `
-                            <div class="flex justify-between items-start p-3 bg-white border rounded-lg shadow-sm break-inside-avoid">
-                                <div class="flex-1">
-                                    <div class="flex items-center gap-2 mb-1">
-                                        <span class="px-2 py-1 rounded-md text-xs font-bold border ${statusClass}">${statusLabel}</span>
-                                        <span class="font-semibold text-gray-800">${label}</span>
-                                    </div>
-                                    <p class="text-sm text-gray-500 ml-1">${cat.title}</p>
-                                    ${item.notes ? `<p class="text-sm mt-2 p-2 bg-gray-50 rounded italic text-gray-600">"${item.notes}"</p>` : ''}
-                                    
-                                    ${photos.length > 0 ? `
-                                        <div class="mt-3 flex gap-2 flex-wrap">
-                                            ${photos.map(p => `<img src="${p}" class="w-16 h-16 object-cover rounded border border-gray-200">`).join('')}
-                                        </div>
-                                    ` : ''}
-                                </div>
-                                ${item.cost > 0 ? `<div class="text-right font-bold text-gray-800 ml-4">$${parseFloat(item.cost).toFixed(2)}</div>` : ''}
-                            </div>
-                        `;
+                    const itemDef = cat.items.find(i => i.id === itemId);
+                    if (itemDef && item.status && grouped[item.status]) {
+                         // Add definition details
+                         grouped[item.status].push({ ...item, label: itemDef.label, category: cat.title });
                     }
                 });
             });
 
-            if (!hasIssues) {
-                issuesHtml = `
-                    <div class="p-4 bg-green-50 text-green-800 rounded-lg border border-green-100 flex items-center gap-3">
-                        <i data-lucide="check-circle-2" class="w-6 h-6"></i>
-                        No issues found. Vehicle is in good condition.
+            // 2. Generate list HTML based on active tab
+            const activeTab = state.reportTab || 'fail';
+            const currentList = grouped[activeTab] || [];
+            let listHtml = '';
+
+            if (currentList.length === 0) {
+                 listHtml = `
+                    <div class="p-8 text-center bg-gray-50 rounded-lg border border-gray-100 flex flex-col items-center justify-center">
+                        <i data-lucide="${activeTab === 'pass' ? 'check-circle' : 'alert-circle'}" class="w-8 h-8 text-gray-300 mb-2"></i>
+                        <p class="text-gray-500 font-medium">No items found in this category.</p>
                     </div>
-                `;
+                 `;
+            } else {
+                 listHtml = currentList.map(item => {
+                    const statusClass = item.status === 'fail' ? 'bg-red-100 text-red-800 border-red-200' : 
+                                      item.status === 'warning' ? 'bg-yellow-100 text-yellow-800 border-yellow-200' :
+                                      'bg-green-100 text-green-800 border-green-200';
+                    const statusLabel = item.status.toUpperCase();
+                    const photos = Array.isArray(item.photos) ? item.photos : [];
+
+                    return `
+                        <div class="flex justify-between items-start p-3 bg-white border rounded-lg shadow-sm mb-3">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="px-2 py-1 rounded-md text-xs font-bold border ${statusClass}">${statusLabel}</span>
+                                    <span class="font-semibold text-gray-800">${item.label}</span>
+                                </div>
+                                <p class="text-sm text-gray-500 ml-1">${item.category}</p>
+                                ${item.notes ? `<p class="text-sm mt-2 p-2 bg-gray-50 rounded italic text-gray-600">"${item.notes}"</p>` : ''}
+                                ${photos.length > 0 ? `
+                                    <div class="mt-3 flex gap-2 flex-wrap">
+                                        ${photos.map(p => `<img src="${p}" class="w-16 h-16 object-cover rounded border border-gray-200">`).join('')}
+                                    </div>
+                                ` : ''}
+                            </div>
+                            ${item.cost > 0 ? `<div class="text-right font-bold text-gray-800 ml-4">$${parseFloat(item.cost).toFixed(2)}</div>` : ''}
+                        </div>
+                    `;
+                 }).join('');
             }
+
+            // 3. Tab Navigation UI
+            const tabBtnClass = (tab) => `flex-1 py-3 text-sm font-bold border-b-2 transition-colors flex items-center justify-center gap-2 ${state.reportTab === tab ? 
+                (tab === 'fail' ? 'border-red-600 text-red-600 bg-red-50' : tab === 'warning' ? 'border-yellow-500 text-yellow-700 bg-yellow-50' : 'border-green-600 text-green-700 bg-green-50') 
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'}`;
+
+            const tabsHtml = `
+                <div class="flex border-b border-gray-200 mb-6 report-tabs no-print">
+                    <button onclick="setReportTab('fail')" class="${tabBtnClass('fail')}">
+                        <i data-lucide="x-circle" class="w-4 h-4"></i> Fail (${grouped.fail.length})
+                    </button>
+                    <button onclick="setReportTab('warning')" class="${tabBtnClass('warning')}">
+                        <i data-lucide="alert-triangle" class="w-4 h-4"></i> Warn (${grouped.warning.length})
+                    </button>
+                    <button onclick="setReportTab('pass')" class="${tabBtnClass('pass')}">
+                        <i data-lucide="check-circle-2" class="w-4 h-4"></i> Pass (${grouped.pass.length})
+                    </button>
+                </div>
+            `;
+            
+            // 4. Fallback for Print View (Static "Issues" List)
+            let printIssuesHtml = '';
+            // Combined Fail/Warn for print
+            [...grouped.fail, ...grouped.warning].forEach(item => {
+                 // Reuse simplified markup for print
+                 const statusLabel = item.status === 'fail' ? 'FAIL' : 'WARN';
+                 printIssuesHtml += `
+                    <div class="flex justify-between items-start p-2 border-b break-inside-avoid">
+                        <div>
+                            <span class="font-bold text-xs mr-2">[${statusLabel}]</span>
+                            <span class="font-semibold text-sm">${item.label}</span>
+                            ${item.notes ? `<div class="text-xs text-gray-500 italic mt-1">"${item.notes}"</div>` : ''}
+                        </div>
+                        ${item.cost > 0 ? `<div class="font-bold text-sm">$${parseFloat(item.cost).toFixed(2)}</div>` : ''}
+                    </div>
+                 `;
+            });
+            if(!printIssuesHtml) printIssuesHtml = '<div class="text-sm italic text-gray-500">No issues found.</div>';
 
             // Detailed Log for Print
             let detailLogHtml = INITIAL_CATEGORIES.map(cat => {
@@ -544,10 +596,21 @@
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div class="col-span-2">
-                                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2"><i data-lucide="alert-triangle" class="w-5 h-5 text-orange-500"></i> Issues Requiring Attention</h3>
-                                <div class="space-y-3">${issuesHtml}</div>
+                            
+                            <!-- INTERACTIVE REPORT COLUMN (Screen Only) -->
+                            <div class="col-span-2 no-print">
+                                ${tabsHtml}
+                                <div class="report-list space-y-3 animate-fade-in">
+                                    ${listHtml}
+                                </div>
                             </div>
+
+                            <!-- PRINT ONLY SUMMARY COLUMN -->
+                            <div class="col-span-2 print-only hidden">
+                                <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Issues Requiring Attention</h3>
+                                ${printIssuesHtml}
+                            </div>
+
                             <div class="bg-slate-50 p-6 rounded-xl border h-fit break-inside-avoid">
                                 <h3 class="text-lg font-bold text-slate-800 mb-4">Estimate Summary</h3>
                                 <div class="space-y-2 mb-4 pb-4 border-b border-gray-200">
@@ -592,6 +655,11 @@
         }
 
         // --- Event Handlers ---
+
+        function setReportTab(tab) {
+            state.reportTab = tab;
+            render();
+        }
 
         function bindEvents() {
             document.querySelectorAll('.vehicle-input').forEach(input => {
@@ -751,4 +819,3 @@
 
         // Start App
         init();
-
