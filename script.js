@@ -1,4 +1,4 @@
-      // --- Data Constants ---
+       // --- Data Constants ---
         const INITIAL_VEHICLE_INFO = {
             vin: '', make: '', model: '', year: new Date().getFullYear(),
             mileage: '', plate: '', customerName: '', technician: ''
