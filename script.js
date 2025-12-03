@@ -170,8 +170,8 @@
         // --- Render Functions ---
 
         function render() {
-            // 1. Capture current scroll position
-            const scrollContainer = document.querySelector('.custom-scroll');
+            // 1. Capture current scroll position of the MAIN content area using specific ID
+            const scrollContainer = document.getElementById('main-scroll');
             const scrollPos = scrollContainer ? scrollContainer.scrollTop : 0;
 
             const root = document.getElementById('root');
@@ -191,8 +191,8 @@
                 `;
             }
             
-            // 2. Restore scroll position
-            const newScrollContainer = document.querySelector('.custom-scroll');
+            // 2. Restore scroll position to specific ID
+            const newScrollContainer = document.getElementById('main-scroll');
             if (newScrollContainer && state.currentView === 'inspection') {
                 newScrollContainer.scrollTop = scrollPos;
             }
@@ -441,7 +441,8 @@
                             <div class="text-sm text-gray-500">${getCategoryStatus(state.activeCategory).completed} of ${activeCat.items.length} checked</div>
                         </div>
 
-                        <div class="flex-1 overflow-y-auto p-4 md:p-6 pb-20 md:pb-6 custom-scroll">
+                        <!-- IMPORTANT: ID added for scroll targeting -->
+                        <div id="main-scroll" class="flex-1 overflow-y-auto p-4 md:p-6 pb-20 md:pb-6 custom-scroll">
                             ${itemsHtml}
                         </div>
 
@@ -750,3 +751,4 @@
 
         // Start App
         init();
+
